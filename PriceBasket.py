@@ -1,5 +1,4 @@
 import sys
-import operator as op
 import locale
 
 
@@ -91,7 +90,7 @@ def main():
 
     def apple_promo(basketcontents,catalogue):
 
-        subdiscount = catalogue.get('Apples')*0.1
+        subdiscount = catalogue.get('Apples') * 0.1
         discount = 0
 
         for i in basketcontents:
@@ -108,14 +107,21 @@ def main():
     def bread_promo(basketcontents,catalogue):
 
         subdiscount = catalogue['Bread']*0.5
-
         discount = 0
+        countbread = 0
+        countsoup = 0
 
-        countbread = op.countOf(basketcontents,'Bread')
+        # using my own list occurrence count rather than add a dependency on Operator library
+        for i in basketcontents:
+            if i == 'Bread':
+                countbread += 1
+            elif i == 'Soup':
+                countsoup += 1
 
-        countsoup = op.countOf(basketcontents,'Soup')
-
-        discount = subdiscount*min(countbread, int(countsoup/2))
+        # We only want to discount loaves of bread if there are two tins of soup.
+        # We don't want to discount at all - regardless of soup count - if there is no bread
+        # this is a clean way to do it, if a bit dense.
+        discount = subdiscount * min(countbread, int(countsoup/2))
 
         if discount > 0:
             discountspiel = '50% off one loaf of bread for two tins of soup: {}'.format(locale.currency(discount,grouping = True))
@@ -129,6 +135,8 @@ def main():
         bread_promo,
     ]
 
+    # build Store information based on input data. Basket will refer to this when verifying added items
+    # and when checking out
     mystore = Store(mycatalogue,mypromotions)
 
     mybasket = Basket(mystore)
