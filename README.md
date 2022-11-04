@@ -1,5 +1,5 @@
 # BasketPricer :shopping_cart:
-This is a simple tool for checking how much some groceries cost.
+This is a simple tool for checking how much some groceries cost. Written with Python 3.9.13.
 
 ## Instructions to Run
 to run this tool, pull the repo, open a terminal in the relevant directory and type:
@@ -20,4 +20,4 @@ This code was written fairly quickly and tailored to a brief. Therefore, there w
     - Detecting poor discount information (negatives)
 - Bespoke classes for grocery items. Currently grocery item information is kept as a standard dict for simplicity. However, additional functionality (such as processing item weights, nutritional information, et cetera) will require refactoring. An ORM could be used here as grocery item information is likely to be kept in a large database.
 - Formatting. It's pretty readable in my opinion, but this can almost always be improved.
-- Currency formatting. Strictly speaking, according to the given brief, we should be formatting currencies less than a pound, as 10p rather than £0.10. I used Locale to format currency, which takes a lot of the fiddly work out. If the pence formatting were absolutely necessary, I could switch to a more obscure library or develop my own string formatting methods. However, for this application, I think the simplicity afforded by the Locale library is a bigger win than the currency formatting being slightly neater.
+- Currency formatting. Strictly speaking, according to the given brief, we should be formatting currencies less than a pound as 10p rather than £0.10. I used Locale to format currency, which takes a lot of the fiddly work out. If the pence formatting were absolutely necessary, I could switch to a more obscure library or develop my own string formatting methods. However, for this application, I think the simplicity afforded by the Locale library is a bigger win than the currency formatting being slightly neater.

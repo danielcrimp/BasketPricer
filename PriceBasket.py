@@ -30,6 +30,9 @@ class Store:
                 discount += a
             if b:
                 discountspiel.append(b)
+
+        # I have elected to keep discounts as positive until they are applied at the checkout.
+        # i.e. accessing discount variables anywhere in this process will show say, £0.50, and £0.50 will be subtracted at checkout.
         return discount, discountspiel
 
     def get_price(self,itemstring):
@@ -111,7 +114,7 @@ def main():
         countbread = 0
         countsoup = 0
 
-        # using my own list occurrence count rather than add a dependency on Operator library
+        # using my own list occurrence count rather than add a dependency on the Operator library
         for i in basketcontents:
             if i == 'Bread':
                 countbread += 1
@@ -120,6 +123,7 @@ def main():
 
         # We only want to discount loaves of bread if there are two tins of soup.
         # We don't want to discount at all - regardless of soup count - if there is no bread
+        # We want to discount for every loaf of bread which has a unique pair of soup tins
         # this is a clean way to do it, if a bit dense.
         discount = subdiscount * min(countbread, int(countsoup/2))
 
