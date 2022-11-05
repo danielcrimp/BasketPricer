@@ -7,6 +7,10 @@ import locale
 # this design is built based on the assumption there may be a multi-store arrangement in future with different prices and promotions.
 
 class Store:
+    """
+    The Store is the single source of truth for the catalogue and a list of promotions.
+    It exists as an environment which tells Basket how to behave when checking requested items and checking out.
+    """
     def __init__(self,catalogue,promotions):
 
         # initialise our catalogue from a dict input.
@@ -32,7 +36,7 @@ class Store:
                 discountspiel.append(b)
 
         # I have elected to keep discounts as positive until they are applied at the checkout.
-        # i.e. accessing discount variables anywhere in this process will show say, £0.50, and £0.50 will be subtracted at checkout.
+        # i.e. accessing discount variables anywhere in this process will show say, 0.50, and £0.50 will be subtracted at checkout.
         return discount, discountspiel
 
     def get_price(self,itemstring):
@@ -40,6 +44,12 @@ class Store:
     
 
 class Basket:
+    """
+    The Basket does most of the heavy lifting - it takes in a store context at initialisation,
+    then validates requested items against the store's catalogue and retrieves prices.
+    On checkout, it pulls promotion logic from the store and applies resultant discounts.
+    """
+
     def __init__(self,Store):
         self.contents = []
         self.Store = Store
@@ -52,11 +62,12 @@ class Basket:
         else:
             print('Item not recognised: {}'.format(itemstring))
             print('Please choose items from the catalogue below...')
-            for i in list(self.Store.catalogue.keys()):
+            for i in self.Store.catalogue:
                 print(i)
             exit()
 
     def checkout(self):
+
         cost = 0        
         for item in self.contents:
             cost += self.Store.get_price(item)
@@ -94,13 +105,9 @@ def main():
     def apple_promo(basketcontents,catalogue):
 
         subdiscount = catalogue.get('Apples') * 0.1
-        discount = 0
+        discount = subdiscount * basketcontents.count('Apples')
 
-        for i in basketcontents:
-            if i == 'Apples':
-                discount += subdiscount
-
-        if discount > 0:
+        if discount:
             discountspiel = 'Apples 10% off: {}'.format(locale.currency(discount,grouping = True))
         else:
             discountspiel = ''
@@ -110,24 +117,16 @@ def main():
     def bread_promo(basketcontents,catalogue):
 
         subdiscount = catalogue['Bread']*0.5
-        discount = 0
-        countbread = 0
-        countsoup = 0
-
-        # using my own list occurrence count rather than add a dependency on the Operator library
-        for i in basketcontents:
-            if i == 'Bread':
-                countbread += 1
-            elif i == 'Soup':
-                countsoup += 1
+        countbread = basketcontents.count('Bread')
+        countsoup = basketcontents.count('Soup')
 
         # We only want to discount loaves of bread if there are two tins of soup.
         # We don't want to discount at all - regardless of soup count - if there is no bread
         # We want to discount for every loaf of bread which has a unique pair of soup tins
         # this is a clean way to do it, if a bit dense.
-        discount = subdiscount * min(countbread, int(countsoup/2))
+        discount = subdiscount * min(countbread, int(countsoup/2) )
 
-        if discount > 0:
+        if discount:
             discountspiel = '50% off one loaf of bread for two tins of soup: {}'.format(locale.currency(discount,grouping = True))
         else:
             discountspiel = ''
